@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 
+const cors=require("cors");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const authroute = require("./routes/auth");
@@ -11,7 +12,15 @@ const multer = require("multer");
 const path = require("path");
 
 dotenv.config();
+const corsOptions ={
+   origin:'*', 
+   credentials:true,            //access-control-allow-credentials:true
+   optionSuccessStatus:200,
+}
+
+
 app.use(express.json());
+
 
 app.use("/images", express.static(path.join(__dirname, "/images")));
 
@@ -37,6 +46,8 @@ app.post("/upload", upload.single("file"), (req, res) => {
   res.status(200).json("File has been uploaded");
 });
 
+
+app.use(cors(corsOptions)) // Use this after the variable declaration
 app.use("/auth", authroute);
 app.use("/user", userroute);
 app.use("/posts", postroute);
@@ -52,8 +63,8 @@ if (process.env.NODE_ENV == "production") {
 // }
 
 app.get("/*", (req, res) => {
-  app.use(express.static(path.join(__dirname, "./my-app/public")));
-  res.sendFile(path.join(__dirname, "./my-app/public", "index.html"));
+  app.use(express.static(path.join(__dirname, "./App/public")));
+  res.sendFile(path.join(__dirname, "./App/public", "index.html"));
 });
 }
 const Port = process.env.PORT || 5000;
